@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>{{ title }}</title>
+        <link rel="stylesheet" href="{{ url_for ('static', filename ='style.css') }}">
+    </head>
+    <body>
+        <h1>Contact</h1>
+        <p>Bienvenue {{ name }} !</p>
+        <p>Tu peux me joindre par :</p>
+        <ul>
+          <li>Email : contact@exemple.com</li>
+          <li>Téléphone : 06 12 34 56 78</li>
+        </ul>
+        <a href="{{ url_for('index') }}">Accueil</a>
+        <a href="{{ url_for('about') }}">About</a>
+    </body>
+</html>
