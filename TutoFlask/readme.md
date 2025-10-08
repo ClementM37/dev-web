@@ -28,3 +28,34 @@ J'ai oublié de mettre a jour mon readme pour cette séance
     - Une vue génère la réponse HTTP (contenu renvoyé).
 
     - Un template affiche dynamiquement des variables Python.
+
+## TP4
+- Mise en place de l’héritage de templates avec base.html
+
+- Utilisation du moteur de templates Jinja2
+
+- Affichage de données issues de la base avec SQLAlchemy
+
+- Création d’une vue listant les auteurs (/auteurs/)
+
+- Ajout et stylisation de tableaux HTML
+
+- Installation et configuration de Bootstrap (Flask-Bootstrap5)
+
+- Ajout d’une barre de navigation et adaptation du design avec Bootstrap
+
+## TP5
+
+- Création du fichier forms.py avec la classe FormAuteur
+
+- Mise en place d’un formulaire sécurisé avec clé secrète et token CSRF
+
+- Implémentation complète du CRUD sur les auteurs :
+
+    - Création d’un auteur (create/insert), Lecture/consultation d’un auteur (view), Modification d’un auteur (update/save) et Suppression d’un auteur (delete/erase)
+
+- Ajout de la gestion et de l’affichage des erreurs de validation
+
+- Ajout des liens de navigation entre les différentes actions CRUD
+
+- Application du même principe pour les livres (modification du prix uniquement)
