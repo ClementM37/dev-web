@@ -3,6 +3,7 @@ from flask import render_template, request
 from monApp.models import Auteur
 from monApp.models import Livre
 from monApp.forms import FormAuteur
+from monApp.forms import FormLivre
 from flask import url_for , redirect
 from .app import db
 
@@ -95,6 +96,12 @@ def eraseAuteur():
     db.session.delete(deletedAuteur)
     db.session.commit()
     return redirect(url_for('getAuteurs'))
+
+@app.route('/livres/<idA>/update/')
+def updateLivre(idA):
+    unLivre = Livre.query.get(idA)
+    unForm = FormLivre(idL=unLivre.idL , Titre=unLivre.Titre, Annee=unLivre.Annee, idA=unLivre.idA)
+    return render_template("livre_update.html",selectedAuteur=unLivre, updateForm=unForm)
 
 if __name__ == "__main__":
     app.run()
