@@ -1,5 +1,7 @@
 import click, logging as lg
 from .app import app, db
+from . models import User
+from hashlib import sha256
 
 @app.cli.command()
 @click.argument('filename')
@@ -39,3 +41,34 @@ def loaddb(filename):
         db.session.add(objet)
     db.session.commit()
     lg.warning('Database initialized!')
+    
+@app.cli. command ()
+def syncdb():
+    '''Creates all missing tables . '''
+    db.create_all()
+    lg.warning('Database synchronized!')
+    
+@app.cli.command()
+@click.argument('login')
+@click.argument('pwd')
+def newuser (login, pwd):
+    m = sha256()
+    m.update(pwd.encode())
+    unUser = User(Login=login ,Password =m.hexdigest())
+    db.session.add(unUser)
+    db.session.commit()
+    lg.warning('User ' + login + ' created!')
+
+@app.cli.command()
+@click.argument('login')
+@click.argument('pwd')
+def newpasswrd (login, pwd):
+    m = sha256()
+    m.update(pwd.encode())
+    unUser = User.query.get(login)
+    if unUser:
+        unUser.Password = m.hexdigest()
+        db.session.commit()
+        lg.warning('Password for user' + login + 'changed!!')
+    else:
+        lg.warning('User ' + login + ' created!')

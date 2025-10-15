@@ -10,11 +10,12 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Tire</th>
+                <th>Titre</th>
                 <th>Prix</th>
                 <th>Url</th>
                 <th>Première Couverture</th>
                 <th>Auteur</th>
+                <th>Actions possibles</th>
             </tr>
         </thead>
         <tbody>
@@ -23,9 +24,24 @@
                     <td>{{ unLivre.idL }}</td>
                     <td>{{ unLivre.Titre }}</td>
                     <td>{{ unLivre.Prix }}</td>
-                    <td> <a href = '{{ unLivre.Url}}'> </a>{{ unLivre.Url}} </td>
-                    <td> <img src='../static/images/images/{{unLivre.Img}}' alt='Couverture'> </td>
+                    <td><a href="{{ unLivre.Url }}" target="_blank">{{ unLivre.Url }}</a></td>
+                    <td>
+                        <img src="{{ url_for('static', filename='images/images/' ~ unLivre.Img) }}" 
+                             alt="Couverture" style="max-height: 100px;">
+                    </td>
                     <td>{{ unLivre.auteur.Nom }}</td>
+                    <td>
+                        <div class="task-controls">
+                            <a href="{{ url_for('viewLivre', idL=unLivre.idL) }}" class="btn btn-info">
+                                Voir <i class="fas fa-eye"></i>
+                            </a>
+                            {% if current_user.is_authenticated %}
+                                <a href="{{ url_for('updateLivre', idL=unLivre.idL) }}" class="btn btn-warning">
+                                    Éditer <i class="fas fa-pen"></i>
+                                 </a>
+                            {% endif %}
+                        </div>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

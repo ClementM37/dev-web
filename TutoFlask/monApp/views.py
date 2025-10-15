@@ -1,11 +1,10 @@
 from .app import app
 from flask import render_template, request
-from monApp.models import Auteur
-from monApp.models import Livre
-from monApp.forms import FormAuteur
-from monApp.forms import FormLivre
+from monApp.models import *
+from monApp.forms import *
 from flask import url_for , redirect
 from .app import db
+from flask_login import *
 
 @app.route('/')
 @app.route('/index/')
@@ -97,12 +96,54 @@ def eraseAuteur():
     db.session.commit()
     return redirect(url_for('getAuteurs'))
 
-@app.route('/livres/<idA>/update/')
-def updateLivre(idA):
-    unLivre = Livre.query.get(idA)
-    unForm = FormLivre(idL=unLivre.idL , Titre=unLivre.Titre, Annee=unLivre.Annee, idA=unLivre.idA)
-    return render_template("livre_update.html",selectedAuteur=unLivre, updateForm=unForm)
+@app.route('/livres/<idL>/update/')
+def updateLivre(idL):
+    unLivre = Livre.query.get(idL)
+    unForm = FormLivre(idL=unLivre.idL , Prix=unLivre.Prix)
+    return render_template("livre_update.html",selectedLivre=unLivre, updateForm=unForm)
+
+@app.route('/livre/save/', methods=("POST",))
+def saveLivre():
+    updatedLivre = None
+    unForm = FormLivre()
+    # recherche du livre à modifier
+    print(unForm.idL.data)
+    idL = int(unForm.idL.data)
+    updatedLivre = Livre.query.get(idL)
+    # si les données saisies sont valides pour la mise à jour
+    if unForm.validate_on_submit():
+        print("je passe")
+        updatedLivre.Prix = unForm.Prix.data
+        db.session.commit()
+        return redirect(url_for('viewLivre', idL=updatedLivre.idL))
+    return render_template("livre_update.html", selectedLivre=updatedLivre, updateForm=unForm)
+
+
+@app.route('/livres/<idL>/view/')
+def viewLivre(idL):
+    unLivre = Livre.query.get(idL)
+    unForm = FormLivre(idL=unLivre.idL, Titre=unLivre.Titre)
+    return render_template("livre_view.html", selectedLivre=unLivre, viewForm=unForm)
+
+@app.route ("/login/", methods =("GET","POST" ,))
+def login():
+    unForm = LoginForm()
+    unUser=None
+    if not unForm.is_submitted():
+        unForm.next.data = request.args.get('next')
+    elif unForm.validate_on_submit():
+        unUser = unForm.get_authenticated_user()
+        if unUser:
+            login_user(unUser)
+            next = unForm.next.data or url_for("index",name=unUser.Login)
+            return redirect (next)
+    return render_template ("login.html",form=unForm)
+
+
+@app.route ("/logout/")
+def logout():
+    logout_user()
+    return redirect ( url_for ('index'))
 
 if __name__ == "__main__":
     app.run()
-
