@@ -128,6 +128,9 @@ J'ai oublié de mettre a jour mon readme pour cette séance
     - `coverage report -m` pour afficher le rapport dans le terminal
     - `coverage html` pour générer un rapport HTML détaillé
 
+## Travail Bonus
+- Ajout de la recherche de livre avec le nom d'un auteur.
+
 ## Image des testes 
 
-![Description de l'image](/TutoFlask/Poucentage_teste.png)
+![Image du coverage](/TutoFlask/Poucentage_teste.png)
