@@ -59,3 +59,75 @@ J'ai oublié de mettre a jour mon readme pour cette séance
 - Ajout des liens de navigation entre les différentes actions CRUD
 
 - Application du même principe pour les livres (modification du prix uniquement)
+
+## TP6
+
+- Installation et configuration de Flask-Login pour gérer l'authentification des utilisateurs
+
+- Création du modèle User avec Login et Password (crypté en SHA256) héritant de UserMixin
+
+- Ajout de commandes CLI personnalisées :
+    - `syncdb` pour créer les tables manquantes dans la base de données
+    - `newuser` pour ajouter un utilisateur avec mot de passe hashé
+    - `newpasswrd` pour modifier le mot de passe d'un utilisateur existant
+
+- Mise en place du LoginManager et du callback user_loader dans models.py
+
+- Création du formulaire LoginForm avec méthode get_authenticated_user() pour vérifier les identifiants
+
+- Implémentation des vues d'authentification :
+    - Vue /login/ (GET et POST) avec formulaire de connexion
+    - Vue /logout/ pour déconnecter l'utilisateur
+
+- Ajout du template login.html pour afficher le formulaire de connexion
+
+- Modification de base.html pour afficher l'utilisateur connecté et les liens de connexion/déconnexion
+
+- Protection des vues sensibles avec le décorateur @login_required
+
+- Mise en place de la redirection automatique :
+    - Configuration de login_manager.login_view
+    - Ajout du champ HiddenField next dans LoginForm
+    - Redirection vers la page initialement demandée après authentification réussie
+
+- Restriction de l'accès : consultation libre pour tous, modification/suppression réservées aux utilisateurs authentifiés
+
+## TP7
+
+- Installation des outils de test : pytest, pytest-flask et coverage
+
+- Configuration des tests avec création du fichier conftest.py :
+    - Fixture testapp pour créer une application de test avec base SQLite en mémoire
+    - Désactivation de la protection CSRF pour les tests
+    - Création d'un jeu de données de test (auteur, livre, user)
+    - Fixture client pour simuler les requêtes HTTP
+
+- Tests unitaires du modèle dans tests/unit/ :
+    - test_models_auteur.py : test de l'initialisation et de la représentation
+    - test_models_livre.py : test du modèle Livre
+    - test_models_user.py : test du modèle User et de la fonction load_user()
+
+- Tests fonctionnels des vues GET dans tests/functional/test_routes_auteur.py :
+    - Test des vues publiques (liste, consultation)
+    - Test de la redirection vers login pour les vues protégées
+    - Création d'une fonction login() pour simuler l'authentification
+    - Test des vues après authentification
+
+- Tests fonctionnels des formulaires POST dans tests/functional/test_forms_auteur.py :
+    - Test de la soumission du formulaire de Capture d’écran_2025-10-16_15-15-30modification (/auteur/save/)
+    - Test de la création d'auteur (/auteur/insert/)
+    - Test de la suppression d'auteur (/auteur/erase/)
+    - Vérification des redirections et de la mise à jour en base de données
+
+- Application des tests aux livres pour atteindre plus de 90% de couverture
+
+- Configuration de .coveragerc pour exclure certains fichiers du calcul de couverture
+
+- Utilisation des commandes coverage :
+    - `coverage run -m pytest` pour exécuter les tests avec mesure de couverture
+    - `coverage report -m` pour afficher le rapport dans le terminal
+    - `coverage html` pour générer un rapport HTML détaillé
+
+## Image des testes 
+
+![Description de l'image](/TutoFlask/Poucentage_teste.png)

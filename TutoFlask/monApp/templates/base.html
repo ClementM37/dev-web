@@ -26,6 +26,7 @@
                             {% if current_user.is_authenticated %}
                                 <li><a class="dropdown-item" href="{{ url_for('createAuteur') }}">Créer un auteur</a></li>
                             {%endif%}
+                            <li><a class="dropdown-item" href="{{ url_for('livresParAuteur') }}">Liste des livres auteur</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

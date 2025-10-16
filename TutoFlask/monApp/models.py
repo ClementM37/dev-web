@@ -40,6 +40,6 @@ class User(db.Model, UserMixin):
         return self.Login
     
 
-@login_manager.user_loader
-def load_user(username):
-    return User.query.get(username)
+    @login_manager.user_loader
+    def load_user(username):
+        return User.query.get(username)

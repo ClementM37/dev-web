@@ -36,12 +36,14 @@ def getLivres():
     return render_template('livre_list.html', title="R3.01 Dev Web avec Flask", livres=lesLivres)
 
 @app.route('/auteurs/<idA>/update/')
+@login_required
 def updateAuteur(idA):
     unAuteur = Auteur.query.get(idA)
     unForm = FormAuteur(idA=unAuteur.idA , Nom=unAuteur.Nom)
     return render_template("auteur_update.html",selectedAuteur=unAuteur, updateForm=unForm)
 
 @app.route ('/auteur/save/', methods =("POST" ,))
+@login_required
 def saveAuteur():
     updatedAuteur = None
     unForm = FormAuteur()
@@ -62,11 +64,13 @@ def viewAuteur(idA):
     return render_template("auteur_view.html",selectedAuteur=unAuteur, viewForm=unForm)
 
 @app.route('/auteur/')
+@login_required
 def createAuteur():
     unForm = FormAuteur()
     return render_template("auteur_create.html", createForm=unForm)
 
 @app.route ('/auteur/insert/', methods =("POST" ,))
+@login_required
 def insertAuteur():
     insertedAuteur = None
     unForm = FormAuteur()
@@ -79,12 +83,14 @@ def insertAuteur():
     return render_template("auteur_create.html", createForm=unForm)
 
 @app.route('/auteurs/<idA>/delete/')
+@login_required
 def deleteAuteur(idA):
     unAuteur = Auteur.query.get(idA)
     unForm = FormAuteur(idA=unAuteur.idA, Nom=unAuteur.Nom)
     return render_template("auteur_delete.html",selectedAuteur=unAuteur, deleteForm=unForm)
 
 @app.route ('/auteur/erase/', methods =("POST" ,))
+@login_required
 def eraseAuteur():
     deletedAuteur = None
     unForm = FormAuteur()
@@ -97,12 +103,14 @@ def eraseAuteur():
     return redirect(url_for('getAuteurs'))
 
 @app.route('/livres/<idL>/update/')
+@login_required
 def updateLivre(idL):
     unLivre = Livre.query.get(idL)
     unForm = FormLivre(idL=unLivre.idL , Prix=unLivre.Prix)
     return render_template("livre_update.html",selectedLivre=unLivre, updateForm=unForm)
 
 @app.route('/livre/save/', methods=("POST",))
+@login_required
 def saveLivre():
     updatedLivre = None
     unForm = FormLivre()
@@ -144,6 +152,18 @@ def login():
 def logout():
     logout_user()
     return redirect ( url_for ('index'))
+
+@app.route('/livres/auteur', methods=['GET'])
+def livresParAuteur():
+    nom = request.args.get('nomAuteur', '').strip()
+
+    if nom == '':
+        return render_template('livres_par_auteur.html', livres=None)
+
+    livres = Livre.query.join(Auteur).filter(Auteur.Nom.ilike(f"%{nom}%")).all()
+
+    return render_template('livres_par_auteur.html', livres=livres)
+
 
 if __name__ == "__main__":
     app.run()
