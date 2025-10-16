@@ -5,6 +5,8 @@ from monApp.forms import *
 from flask import url_for , redirect
 from .app import db
 from flask_login import *
+from flask import flash
+from sqlalchemy.exc import IntegrityError
 
 @app.route('/')
 @app.route('/index/')
@@ -42,20 +44,33 @@ def updateAuteur(idA):
     unForm = FormAuteur(idA=unAuteur.idA , Nom=unAuteur.Nom)
     return render_template("auteur_update.html",selectedAuteur=unAuteur, updateForm=unForm)
 
-@app.route ('/auteur/save/', methods =("POST" ,))
+@app.route('/auteur/save/', methods=("POST",))
 @login_required
 def saveAuteur():
-    updatedAuteur = None
     unForm = FormAuteur()
-    #recherche de l'auteur à modifier
-    idA = int(unForm.idA.data)
-    updatedAuteur = Auteur.query.get(idA)
-    #si les données saisies sont valides pour la mise à jour
+    updatedAuteur = None
     if unForm.validate_on_submit():
+        idA = int(unForm.idA.data)
+        updatedAuteur = Auteur.query.get(idA)
+        
+        # Vérifie si un autre auteur a déjà ce nom
+        if Auteur.query.filter(Auteur.Nom == unForm.Nom.data, Auteur.idA != idA).first():
+            flash("Un auteur avec ce nom existe déjà.", "warning")
+            return render_template("auteur_update.html", selectedAuteur=updatedAuteur, updateForm=unForm)
+        
+        # Mise à jour si tout est ok
         updatedAuteur.Nom = unForm.Nom.data
-        db.session.commit()
-        return redirect(url_for('viewAuteur', idA=updatedAuteur.idA))
-    return render_template("auteur_update.html",selectedAuteur=updatedAuteur, updateForm=unForm)
+        try:
+            db.session.commit()
+            flash("Auteur mis à jour avec succès !", "success")
+            return redirect(url_for('viewAuteur', idA=updatedAuteur.idA))
+        except IntegrityError:
+            db.session.rollback()
+            flash("Ce nom d'auteur existe déjà.", "danger")
+            return render_template("auteur_update.html", selectedAuteur=updatedAuteur, updateForm=unForm)
+    
+    return render_template("auteur_update.html", selectedAuteur=updatedAuteur, updateForm=unForm)
+
 
 @app.route('/auteurs/<idA>/view/')
 def viewAuteur(idA):
@@ -69,18 +84,29 @@ def createAuteur():
     unForm = FormAuteur()
     return render_template("auteur_create.html", createForm=unForm)
 
-@app.route ('/auteur/insert/', methods =("POST" ,))
+@app.route('/auteur/insert/', methods=("POST",))
 @login_required
 def insertAuteur():
-    insertedAuteur = None
     unForm = FormAuteur()
     if unForm.validate_on_submit():
+        # Vérifie si le nom existe déjà
+        if Auteur.query.filter_by(Nom=unForm.Nom.data).first():
+            flash("Ce nom d'auteur existe déjà. Veuillez en choisir un autre.", "danger")
+            return render_template("auteur_create.html", createForm=unForm)
+
         insertedAuteur = Auteur(Nom=unForm.Nom.data)
         db.session.add(insertedAuteur)
-        db.session.commit()
-        insertedId = Auteur.query.count()
-        return redirect(url_for('viewAuteur', idA=insertedId))
+        try:
+            db.session.commit()
+            flash("Auteur créé avec succès !", "success")
+            return redirect(url_for('viewAuteur', idA=insertedAuteur.idA))
+        except IntegrityError:
+            db.session.rollback()
+            flash("Ce nom d'auteur existe déjà. Veuillez en choisir un autre.", "danger")
+            return render_template("auteur_create.html", createForm=unForm)
+    
     return render_template("auteur_create.html", createForm=unForm)
+
 
 @app.route('/auteurs/<idA>/delete/')
 @login_required

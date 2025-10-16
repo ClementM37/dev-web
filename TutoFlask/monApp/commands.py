@@ -52,6 +52,8 @@ def syncdb():
 @click.argument('login')
 @click.argument('pwd')
 def newuser (login, pwd):
+    '''Create a new user with the given login and password.'''
+    
     m = sha256()
     m.update(pwd.encode())
     unUser = User(Login=login ,Password =m.hexdigest())
@@ -63,6 +65,8 @@ def newuser (login, pwd):
 @click.argument('login')
 @click.argument('pwd')
 def newpasswrd (login, pwd):
+    '''Change the password of an existing user.'''
+    
     m = sha256()
     m.update(pwd.encode())
     unUser = User.query.get(login)

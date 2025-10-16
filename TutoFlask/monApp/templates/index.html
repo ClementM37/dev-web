@@ -2,6 +2,10 @@
 
 {% block main %}
 <body >
-    <h1>Bienvenu {{name}} !!</h1>
+    <h1>{% if current_user.is_authenticated %}
+    Bonjour {{ current_user.Login }}
+{% else %}
+    Bonjour Utilisateur
+{% endif %}</h1>
 </body >
 {% endblock %}
